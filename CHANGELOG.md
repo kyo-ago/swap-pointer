@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.3](https://github.com/kyo-ago/swap-pointer/compare/v0.0.2...v0.0.3) - 2026-03-31
+- Consolidate release workflow into tagpr job by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/7
+
 ## [v0.0.2](https://github.com/kyo-ago/swap-pointer/compare/v0.0.1...v0.0.2) - 2026-03-31
 - Update CI/CD workflows: checkout v6, use gh CLI for releases by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/5
 
