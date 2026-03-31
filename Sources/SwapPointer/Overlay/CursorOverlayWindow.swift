@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 
 /// Manages overlay windows that show dormant cursor positions.
+@MainActor
 final class CursorOverlayManager {
     private var overlayWindows: [String: NSWindow] = [:]
     private var animationWindow: NSWindow?
@@ -138,6 +139,7 @@ final class CursorOverlayManager {
 
 extension CGPoint {
     /// Convert from CG coordinate system (top-left origin) to screen coordinate system (bottom-left origin).
+    @MainActor
     var convertedToScreen: NSPoint {
         guard let screen = NSScreen.main else { return NSPoint(x: x, y: y) }
         return NSPoint(x: x, y: screen.frame.height - y)

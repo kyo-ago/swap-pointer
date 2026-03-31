@@ -1,7 +1,9 @@
+import CoreGraphics
 import Testing
 @testable import SwapPointer
 
 @Suite("CursorSlotManager Tests")
+@MainActor
 struct CursorSlotManagerTests {
     @Test("Save and retrieve position")
     func saveAndRetrievePosition() {

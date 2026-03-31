@@ -2,7 +2,7 @@ import Foundation
 
 extension UserDefaults {
     /// Shared UserDefaults instance for SwapPointer settings.
-    static let swapPointer = UserDefaults.standard
+    nonisolated(unsafe) static let swapPointer = UserDefaults.standard
 
     // MARK: - Auto-Detection
 

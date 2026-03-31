@@ -1,7 +1,8 @@
-import CoreGraphics
+@preconcurrency import CoreGraphics
 import Foundation
 
 /// Manages a CGEventTap for intercepting and suppressing mouse events.
+@MainActor
 final class EventTapManager {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -19,7 +20,12 @@ final class EventTapManager {
     init() {}
 
     deinit {
-        stop()
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+        }
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        }
     }
 
     /// Start the event tap.
@@ -43,8 +49,10 @@ final class EventTapManager {
                 guard let userInfo = userInfo else {
                     return Unmanaged.passUnretained(event)
                 }
-                let this = Unmanaged<EventTapManager>.fromOpaque(userInfo).takeUnretainedValue()
-                return this.handleEvent(type: type, event: event)
+                return MainActor.assumeIsolated {
+                    let this = Unmanaged<EventTapManager>.fromOpaque(userInfo).takeUnretainedValue()
+                    return this.handleEvent(type: type, event: event)
+                }
             },
             userInfo: context
         )
@@ -81,8 +89,10 @@ final class EventTapManager {
         suppressionEndTime = Date().addingTimeInterval(suppressionDuration)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + suppressionDuration) { [weak self] in
-            self?.isSuppressing = false
-            self?.suppressionEndTime = nil
+            MainActor.assumeIsolated {
+                self?.isSuppressing = false
+                self?.suppressionEndTime = nil
+            }
         }
     }
 

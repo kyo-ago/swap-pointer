@@ -3,6 +3,7 @@ import CoreGraphics
 import Foundation
 
 /// Integrates both hotkey-based and auto-detection-based cursor slot switching.
+@MainActor
 final class SwitchTriggerManager {
     private let hidDeviceManager: HIDDeviceManager
     private let cursorSlotManager: CursorSlotManager
@@ -100,7 +101,6 @@ final class SwitchTriggerManager {
 
         let handler: EventHandlerUPP = { _, event, userData -> OSStatus in
             guard let userData = userData else { return OSStatus(eventNotHandledErr) }
-            let this = Unmanaged<SwitchTriggerManager>.fromOpaque(userData).takeUnretainedValue()
 
             var hotkeyID = EventHotKeyID()
             GetEventParameter(
@@ -113,7 +113,10 @@ final class SwitchTriggerManager {
                 &hotkeyID
             )
 
-            this.handleHotkeyPressed(id: Int(hotkeyID.id))
+            MainActor.assumeIsolated {
+                let this = Unmanaged<SwitchTriggerManager>.fromOpaque(userData).takeUnretainedValue()
+                this.handleHotkeyPressed(id: Int(hotkeyID.id))
+            }
             return noErr
         }
 

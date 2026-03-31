@@ -1,6 +1,6 @@
 import Foundation
-import IOKit
-import IOKit.hid
+@preconcurrency import IOKit
+@preconcurrency import IOKit.hid
 
 /// Represents a recognized mouse device with its identification info.
 struct MouseDevice: Identifiable, Equatable {
@@ -18,6 +18,7 @@ struct MouseDevice: Identifiable, Equatable {
 }
 
 /// Manages IOHIDManager to detect, identify, and receive events from individual mouse devices.
+@MainActor
 final class HIDDeviceManager {
     private var hidManager: IOHIDManager?
     private(set) var connectedDevices: [MouseDevice] = []
@@ -57,18 +58,24 @@ final class HIDDeviceManager {
         let context = Unmanaged.passUnretained(self).toOpaque()
 
         IOHIDManagerRegisterDeviceMatchingCallback(manager, { context, _, _, device in
-            let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
-            this.handleDeviceConnected(device)
+            MainActor.assumeIsolated {
+                let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
+                this.handleDeviceConnected(device)
+            }
         }, context)
 
         IOHIDManagerRegisterDeviceRemovalCallback(manager, { context, _, _, device in
-            let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
-            this.handleDeviceDisconnected(device)
+            MainActor.assumeIsolated {
+                let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
+                this.handleDeviceDisconnected(device)
+            }
         }, context)
 
-        IOHIDManagerRegisterInputValueCallback(manager, { context, _, value in
-            let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
-            this.handleInputValue(value)
+        IOHIDManagerRegisterInputValueCallback(manager, { context, _, _, value in
+            MainActor.assumeIsolated {
+                let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
+                this.handleInputValue(value)
+            }
         }, context)
 
         IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
