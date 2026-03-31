@@ -1,4 +1,5 @@
 import AppKit
+@preconcurrency import ApplicationServices
 import Foundation
 
 /// Manages checking and requesting macOS permissions required by SwapPointer.
