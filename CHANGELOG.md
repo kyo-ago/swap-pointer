@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.4](https://github.com/kyo-ago/swap-pointer/compare/v0.0.3...v0.0.4) - 2026-03-31
+- Fix GitHub Release creation to handle existing releases by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/9
+
 ## [v0.0.3](https://github.com/kyo-ago/swap-pointer/compare/v0.0.2...v0.0.3) - 2026-03-31
 - Consolidate release workflow into tagpr job by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/7
 
