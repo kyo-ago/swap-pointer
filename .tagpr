@@ -1,2 +1,5 @@
 [tagpr]
 vfile = VERSION
+	vPrefix = true
+	releaseBranch = main
+	versionFile = -
