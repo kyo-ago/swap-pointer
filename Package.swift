@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "SwapPointer",
     platforms: [
-        .macOS(.v15)
+        .macOS(.v26)
     ],
     targets: [
         .executableTarget(
