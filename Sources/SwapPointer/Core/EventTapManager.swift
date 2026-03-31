@@ -1,4 +1,4 @@
-import CoreGraphics
+@preconcurrency import CoreGraphics
 import Foundation
 
 /// Manages a CGEventTap for intercepting and suppressing mouse events.
