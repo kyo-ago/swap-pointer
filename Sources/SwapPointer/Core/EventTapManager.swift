@@ -20,7 +20,12 @@ final class EventTapManager {
     init() {}
 
     deinit {
-        stop()
+        if let tap = eventTap {
+            CGEvent.tapEnable(tap: tap, enable: false)
+        }
+        if let source = runLoopSource {
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes)
+        }
     }
 
     /// Start the event tap.
@@ -84,8 +89,10 @@ final class EventTapManager {
         suppressionEndTime = Date().addingTimeInterval(suppressionDuration)
 
         DispatchQueue.main.asyncAfter(deadline: .now() + suppressionDuration) { [weak self] in
-            self?.isSuppressing = false
-            self?.suppressionEndTime = nil
+            MainActor.assumeIsolated {
+                self?.isSuppressing = false
+                self?.suppressionEndTime = nil
+            }
         }
     }
 
