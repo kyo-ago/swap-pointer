@@ -1,6 +1,6 @@
 import Foundation
-import IOKit
-import IOKit.hid
+@preconcurrency import IOKit
+@preconcurrency import IOKit.hid
 
 /// Represents a recognized mouse device with its identification info.
 struct MouseDevice: Identifiable, Equatable {
