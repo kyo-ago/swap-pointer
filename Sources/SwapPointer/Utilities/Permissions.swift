@@ -10,15 +10,17 @@ final class PermissionManager {
 
     /// Check if Accessibility permission is granted.
     var isAccessibilityGranted: Bool {
-        AXIsProcessTrustedWithOptions(
-            [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): false] as CFDictionary
+        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
+        return AXIsProcessTrustedWithOptions(
+            [key: false] as CFDictionary
         )
     }
 
     /// Request Accessibility permission (shows system prompt if not granted).
     func requestAccessibility() {
+        let key = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
         AXIsProcessTrustedWithOptions(
-            [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+            [key: true] as CFDictionary
         )
     }
 

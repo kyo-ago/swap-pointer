@@ -71,7 +71,7 @@ final class HIDDeviceManager {
             }
         }, context)
 
-        IOHIDManagerRegisterInputValueCallback(manager, { context, _, value in
+        IOHIDManagerRegisterInputValueCallback(manager, { context, _, _, value in
             MainActor.assumeIsolated {
                 let this = Unmanaged<HIDDeviceManager>.fromOpaque(context!).takeUnretainedValue()
                 this.handleInputValue(value)
