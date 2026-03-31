@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 
 /// Manages checking and requesting macOS permissions required by SwapPointer.
+@MainActor
 final class PermissionManager {
     static let shared = PermissionManager()
 

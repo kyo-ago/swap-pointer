@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 
 /// Manages a CGEventTap for intercepting and suppressing mouse events.
+@MainActor
 final class EventTapManager {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -43,8 +44,10 @@ final class EventTapManager {
                 guard let userInfo = userInfo else {
                     return Unmanaged.passUnretained(event)
                 }
-                let this = Unmanaged<EventTapManager>.fromOpaque(userInfo).takeUnretainedValue()
-                return this.handleEvent(type: type, event: event)
+                return MainActor.assumeIsolated {
+                    let this = Unmanaged<EventTapManager>.fromOpaque(userInfo).takeUnretainedValue()
+                    return this.handleEvent(type: type, event: event)
+                }
             },
             userInfo: context
         )

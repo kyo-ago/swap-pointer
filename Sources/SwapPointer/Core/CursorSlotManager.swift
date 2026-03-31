@@ -2,6 +2,7 @@ import CoreGraphics
 import Foundation
 
 /// Manages cursor position slots, one per mouse device.
+@MainActor
 final class CursorSlotManager {
     /// Stored cursor positions keyed by device ID.
     private var slots: [String: CGPoint] = [:]

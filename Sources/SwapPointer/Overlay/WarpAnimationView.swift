@@ -73,8 +73,10 @@ final class WarpAnimationView: NSView {
 
         CATransaction.begin()
         CATransaction.setCompletionBlock { [weak self] in
-            ringLayer.removeFromSuperlayer()
-            self?.completionHandler?()
+            MainActor.assumeIsolated {
+                ringLayer.removeFromSuperlayer()
+                self?.completionHandler?()
+            }
         }
         ringLayer.add(group, forKey: "warpAnimation")
         ringLayer.path = finalPath
