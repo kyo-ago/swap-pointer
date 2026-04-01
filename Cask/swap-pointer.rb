@@ -7,7 +7,7 @@ cask "swap-pointer" do
   desc "Multi-mouse cursor switching utility for macOS"
   homepage "https://github.com/kyo-ago/swap-pointer"
 
-  binary "SwapPointer"
+  app "SwapPointer.app"
 
   zap trash: [
     "~/Library/Preferences/com.kyo-ago.SwapPointer.plist",
