@@ -44,9 +44,8 @@ jobs:
           APP_DIR="${{ github.workspace }}/SwapPointer.app"
           CONTENTS_DIR="$APP_DIR/Contents"
           MACOS_DIR="$CONTENTS_DIR/MacOS"
-          RESOURCES_DIR="$CONTENTS_DIR/Resources"
 
-          mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
+          mkdir -p "$MACOS_DIR"
           cp "$BIN_PATH" "$MACOS_DIR/SwapPointer"
           cp Sources/SwapPointer/Resources/Info.plist "$CONTENTS_DIR/Info.plist"
 
@@ -54,6 +53,7 @@ jobs:
           TAG="${{ needs.tagpr.outputs.tag }}"
           VERSION="${TAG#v}"
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$CONTENTS_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$CONTENTS_DIR/Info.plist"
 
           echo "path=$APP_DIR" >> "$GITHUB_OUTPUT"
 

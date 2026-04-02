@@ -16,8 +16,6 @@
     <string>APPL</string>
     <key>CFBundleExecutable</key>
     <string>SwapPointer</string>
-    <key>CFBundleIconFile</key>
-    <string>AppIcon</string>
     <key>LSMinimumSystemVersion</key>
     <string>15.0</string>
     <key>LSUIElement</key>
