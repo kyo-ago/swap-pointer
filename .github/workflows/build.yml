@@ -20,3 +20,16 @@ jobs:
 
       - name: Test
         run: swift test
+
+      - name: Verify .app bundle
+        run: |
+          BIN_PATH=$(swift build --show-bin-path)/SwapPointer
+          APP_DIR="$RUNNER_TEMP/SwapPointer.app"
+          CONTENTS_DIR="$APP_DIR/Contents"
+          mkdir -p "$CONTENTS_DIR/MacOS"
+          cp "$BIN_PATH" "$CONTENTS_DIR/MacOS/SwapPointer"
+          cp Sources/SwapPointer/Resources/Info.plist "$CONTENTS_DIR/Info.plist"
+          # Verify bundle structure
+          test -f "$CONTENTS_DIR/MacOS/SwapPointer"
+          test -f "$CONTENTS_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$CONTENTS_DIR/Info.plist"

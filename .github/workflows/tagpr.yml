@@ -37,9 +37,25 @@ jobs:
       - name: Build Release
         run: swift build -c release
 
-      - name: Get binary path
-        id: binary
-        run: echo "path=$(swift build -c release --show-bin-path)/SwapPointer" >> "$GITHUB_OUTPUT"
+      - name: Create .app bundle
+        id: app
+        run: |
+          BIN_PATH=$(swift build -c release --show-bin-path)/SwapPointer
+          APP_DIR="${{ github.workspace }}/SwapPointer.app"
+          CONTENTS_DIR="$APP_DIR/Contents"
+          MACOS_DIR="$CONTENTS_DIR/MacOS"
+
+          mkdir -p "$MACOS_DIR"
+          cp "$BIN_PATH" "$MACOS_DIR/SwapPointer"
+          cp Sources/SwapPointer/Resources/Info.plist "$CONTENTS_DIR/Info.plist"
+
+          # Update version in Info.plist
+          TAG="${{ needs.tagpr.outputs.tag }}"
+          VERSION="${TAG#v}"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$CONTENTS_DIR/Info.plist"
+          /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$CONTENTS_DIR/Info.plist"
+
+          echo "path=$APP_DIR" >> "$GITHUB_OUTPUT"
 
       - name: Codesign
         if: env.DEVELOPER_ID_APPLICATION != ''
@@ -59,8 +75,8 @@ jobs:
           security import certificate.p12 -k $KEYCHAIN_PATH -P "$KEYCHAIN_PASSWORD" -T /usr/bin/codesign
           security list-keychain -d user -s $KEYCHAIN_PATH
 
-          # Sign
-          codesign --force --options runtime --sign "$DEVELOPER_ID_APPLICATION" "${{ steps.binary.outputs.path }}"
+          # Sign the .app bundle
+          codesign --force --deep --options runtime --sign "$DEVELOPER_ID_APPLICATION" "${{ steps.app.outputs.path }}"
 
       - name: Notarize
         if: env.APPLE_ID != ''
@@ -70,17 +86,17 @@ jobs:
           APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
         run: |
           # Create zip for notarization
-          ditto -c -k --keepParent "${{ steps.binary.outputs.path }}" SwapPointer.zip
-          xcrun notarytool submit SwapPointer.zip \
+          ditto -c -k --keepParent "${{ steps.app.outputs.path }}" SwapPointer-notarize.zip
+          xcrun notarytool submit SwapPointer-notarize.zip \
             --apple-id "$APPLE_ID" \
             --team-id "$APPLE_TEAM_ID" \
             --password "$APPLE_APP_PASSWORD" \
             --wait
+          xcrun stapler staple "${{ steps.app.outputs.path }}"
 
       - name: Create Release Archive
         run: |
-          cd $(swift build -c release --show-bin-path)
-          zip -r ${{ github.workspace }}/SwapPointer-${{ needs.tagpr.outputs.tag }}-macOS.zip SwapPointer
+          ditto -c -k --keepParent "${{ steps.app.outputs.path }}" SwapPointer-${{ needs.tagpr.outputs.tag }}-macOS.zip
 
       - name: Create GitHub Release
         env:
