@@ -96,8 +96,7 @@ jobs:
 
       - name: Create Release Archive
         run: |
-          cd ${{ github.workspace }}
-          zip -r SwapPointer-${{ needs.tagpr.outputs.tag }}-macOS.zip SwapPointer.app
+          ditto -c -k --keepParent "${{ steps.app.outputs.path }}" SwapPointer-${{ needs.tagpr.outputs.tag }}-macOS.zip
 
       - name: Create GitHub Release
         env:
