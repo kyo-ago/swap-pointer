@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.0.5](https://github.com/kyo-ago/swap-pointer/compare/v0.0.4...v0.0.5) - 2026-04-02
+- Package SwapPointer as a macOS .app bundle by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/11
+
 ## [v0.0.4](https://github.com/kyo-ago/swap-pointer/compare/v0.0.3...v0.0.4) - 2026-03-31
 - Fix GitHub Release creation to handle existing releases by @kyo-ago in https://github.com/kyo-ago/swap-pointer/pull/9
 
