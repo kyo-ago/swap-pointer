@@ -159,7 +159,7 @@ final class SwitchTriggerManager {
     }
 
     private func registerHotkey(id: Int, keyCode: UInt32, modifiers: UInt32) {
-        var hotkeyID = EventHotKeyID(signature: OSType(0x5350_5452), id: UInt32(id))  // 'SPTR'
+        let hotkeyID = EventHotKeyID(signature: OSType(0x5350_5452), id: UInt32(id))  // 'SPTR'
         var hotkeyRef: EventHotKeyRef?
         let status = RegisterEventHotKey(keyCode, modifiers, hotkeyID, GetApplicationEventTarget(), 0, &hotkeyRef)
         if status == noErr, let ref = hotkeyRef {
